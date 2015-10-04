@@ -246,8 +246,8 @@ function view_component_init() {
     result_count_area = $("#result-count");
     clear();
 }
-view_component_init();
 document.addEventListener('DOMContentLoaded', function() {
+    view_component_init();
     var search_box = $("#keywords");
     var search_btn = $("#commit-search");
     search_box.on('keypress', function(e) {

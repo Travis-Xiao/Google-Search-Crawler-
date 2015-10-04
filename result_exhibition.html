@@ -4,28 +4,25 @@
     <meta charset="UTF-8">
     <title>Google Search Auto Crawler</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="css/theme.css">
 </head>
 <body>
 <nav class="navbar navbar-default" role="navigation">
     <div class="container">
-        <div class="navbar-form navbar-header" role="search">
-            <div class="form-group">
-                <input id="keywords" type="text" class="form-control" placeholder="Search" aria-describedby="sizing-addon2">
+        <div class="navbar-form col-lg-4" role="search">
+            <div class="input-group">
+                <span class="input-group-btn">
+                    <button id="commit-search" type="submit" class="btn btn-default">Go!</button>
+                </span>
+                <input id="keywords" type="text" class="form-control" placeholder="Search">
             </div>
-            <button id="commit-search" type="submit" class="btn btn-default">Submit</button>
-        </div>
-        <div class="navbar-nav">
-            <a class="navbar-brand" href="#">
-                <b>Result: </b><span id="result-count">--</span>
-            </a>
         </div>
         <div class="navbar-header">
             <a class="navbar-brand" href="#">
                 <span id="status" class="text-primary"><b>Ready</b></span>
             </a>
         </div>
-        <div class="collapse navbar-collapse navbar-right">
+        <div class="navbar-right pull-right">
             <ul class="nav navbar-nav">
                 <li>
                     <a href="#"><b>TLD: </b><span id="tld-progress">(0 / 0)</span></a>
@@ -40,38 +37,91 @@
         </div>
     </div>
 </nav>
-<div class="row">
-    <div class="col-sm-1"></div>
-    <div class="panel panel-default col-sm-5">
-        <!-- Default panel contents -->
-        <div class="panel-heading">
-            <b>Start Time</b>
-            <span id="starttime">--</span>
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="panel panel-default" id="navs">
+                <div class="panel-heading">
+                    <b>Start Time</b>
+                    <span id="starttime">--</span>
+                </div>
+                <p></p>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Date</th>
+                        <th>Request URL</th>
+                        <th>Extract Link</th>
+                        <th>New Link</th>
+                        <th>Error</th>
+                    </tr>
+                    </thead>
+                    <tbody id="query-status-area">
+                    </tbody>
+                </table>
+            </div>
         </div>
-        <table class="table">
-            <thead>
-            <tr>
-                <th>#</th>
-                <th>Date</th>
-                <th>Request URL</th>
-                <th>Extract Link</th>
-                <th>New Link</th>
-                <th>Error</th>
-            </tr>
-            </thead>
-            <tbody id="query-status-area">
-            </tbody>
-        </table>
+        <div class="col-lg-6" id="navbar">
+            <div class="panel panel-default">
+                <div class="navbar">
+                    <p class="pull-left btn btn-default navbar-btn col-lg-3" href="#">
+                        <b>Result: </b><span id="result-count">--</span>
+                    </p>
+                    <a class="btn btn-success pull-right navbar-btn">Export</a>
+                </div>
+                <p></p>
+                <ul id="result-area" class="list-group">
+                    <li class="list-group-item">Cras justo odio</li>
+                    <li class="list-group-item">Dapibus ac facilisis in</li>
+                    <li class="list-group-item">Morbi leo risus</li>
+                    <li class="list-group-item">Porta ac consectetur ac</li>
+                    <li class="list-group-item">Vestibulum at eros</li>
+                </ul>
+            </div>
+        </div>
     </div>
-    <div class="col-sm-5">
-        <ul id="result-area" class="list-group">
-            <li class="list-group-item">Cras justo odio</li>
-            <li class="list-group-item">Dapibus ac facilisis in</li>
-            <li class="list-group-item">Morbi leo risus</li>
-            <li class="list-group-item">Porta ac consectetur ac</li>
-            <li class="list-group-item">Vestibulum at eros</li>
-        </ul>
-    </div>
+    <!--<div class="row">-->
+    <!--<div class="col-sm-1"></div>-->
+    <!--<div class="panel panel-default col-sm-5">-->
+    <!--&lt;!&ndash; Default panel contents &ndash;&gt;-->
+    <!--<div class="panel-heading">-->
+    <!--<b>Start Time</b>-->
+    <!--<span id="starttime">&#45;&#45;</span>-->
+    <!--</div>-->
+    <!--<table class="table">-->
+    <!--<thead>-->
+    <!--<tr>-->
+    <!--<th>#</th>-->
+    <!--<th>Date</th>-->
+    <!--<th>Request URL</th>-->
+    <!--<th>Extract Link</th>-->
+    <!--<th>New Link</th>-->
+    <!--<th>Error</th>-->
+    <!--</tr>-->
+    <!--</thead>-->
+    <!--<tbody id="query-status-area">-->
+    <!--</tbody>-->
+    <!--</table>-->
+    <!--</div>-->
+    <!--<div class="col-sm-5 panel-info">-->
+    <!--<div class="panel-heading">-->
+    <!--<button class="btn btn-primary pull-left">Export</button>-->
+    <!--<a class="text-success" href="#">-->
+    <!--<h4><b>Result: </b><span id="result-count">&#45;&#45;</span></h4>-->
+    <!--</a>-->
+    <!--</div>-->
+    <!--<div class="panel-body">-->
+    <!--<ul id="result-area" class="list-group">-->
+    <!--<li class="list-group-item">Cras justo odio</li>-->
+    <!--<li class="list-group-item">Dapibus ac facilisis in</li>-->
+    <!--<li class="list-group-item">Morbi leo risus</li>-->
+    <!--<li class="list-group-item">Porta ac consectetur ac</li>-->
+    <!--<li class="list-group-item">Vestibulum at eros</li>-->
+    <!--</ul>-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--</div>-->
 </div>
 </body>
 <script src="lib/jquery-2.1.4.min.js"></script>
