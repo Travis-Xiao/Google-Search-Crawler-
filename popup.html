@@ -1,0 +1,28 @@
+<html>
+<head>
+    <title>Google Extended Search</title>
+    <style>
+        body {
+            font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
+            font-size: 100%;
+        }
+
+        #status {
+            /* avoid an excessively wide status text */
+            white-space: pre;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            max-width: 400px;
+        }
+    </style>
+    <script src="lib/jquery-1.8.3.min.js"></script>
+    <script src="popup.js"></script>
+</head>
+<body>
+<div id="status">
+    <label>Search:</label>
+    <input type="text" id="keywords">
+</div>
+</body>
+</html>
+

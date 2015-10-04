@@ -1,0 +1,28 @@
+{
+  "manifest_version": 2,
+  "name": "Google Search Crawler",
+  "description": "This extension shows a Google Image search result for the current page",
+  "version": "1.0",
+  "browser_action": {
+    "default_icon": "icon.png",
+    "default_popup": "popup.html"
+  },
+  "permissions": [
+    "tabs",
+    "*://*.google.com.hk/*",
+    "*://*.baidu.com/*"
+  ],
+  "background": {
+    "page": "background.html",
+    "persistent": false
+  },
+  "externally_connectable": {
+    "matches": ["*://*.google.com.hk/*", "*://*.baidu.com/*"]
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.google.com.hk/*", "*://*.baidu.com/*"],
+      "js": ["injection.js"]
+    }
+  ]
+}
