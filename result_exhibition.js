@@ -11,6 +11,7 @@ var port;
 var query_sequence;
 var last_page_content = "";
 var record_sequence;
+var link_processed;
 
 var query_status_area, status_board, result_area, result_count_area,
     tld_progress, tp_progress, page_progress,
@@ -32,15 +33,17 @@ function log_status(type, data) {
             var item = $("<li>");
             item.addClass("list-group-item");
             item.text(data);
-            result_area.prepend(item);
-            //if
+            //result_area.prepend(item);
+            item.hide().prependTo(result_area).fadeIn(30);
+            if (result_area.children().length > 50)
+                result_area.children().last().remove();
             break;
         case "update":
             var progress = data['progress'];
             tld_progress.text(progress['query']['curr'] + " / " + progress['query']['total']);
             tp_progress.text(progress['time_point']['curr'] + " / " + progress['time_point']['total']);
             page_progress.text(progress['page']['curr'] + " / " + progress['page']['total']);
-            result_count_area.text(data['result']['total_result']);
+            result_count_area.text(data['result']['total_result'] + " / " + data['result']['link_processed']);
 
             var result = data["result"];
             var matches = result["search_url"].match(/wd=.+&pn=[0-9]+&/g);
@@ -52,7 +55,10 @@ function log_status(type, data) {
                 + "<td>" + result["new_link_count"] + "</td>"
                 + "<td>" + (data['error']['count'] || "--") + "</td>"
                 + "</tr>");
-            query_status_area.prepend(record);
+            //query_status_area.prepend(record);
+            record.hide().prependTo(query_status_area).fadeIn();
+            if (query_status_area.children().length > 50)
+                query_status_area.children().last().remove();
             record_sequence ++;
             break;
         default :
@@ -69,10 +75,9 @@ function start_query (query) {
     var earliest_date_point = new Date(start_date - 1200 * day_length);
     while (earliest_date_point < cur_date)
         time_points.push(cur_date = new Date(cur_date - day_length));
-    policy = new BaiduPolicy();
+
     keywords = query.split(" ");
     queries = prepare_query(policy, keywords, tlds);
-    total_links = new Set();
     curr_time_point_result_count = 0;
 
     // initiate long lived connection with background.js
@@ -154,6 +159,7 @@ function process_page(response) {
     }
     // update link records
     var prev_link_count = total_links.size();
+    link_processed += links.length;
     curr_time_point_result_count += links.length;
     total_links.merge(links);
     //for (var link in links) total_links.add(link);
@@ -185,16 +191,13 @@ function process_page(response) {
             "total_result": total_links.size(),
             "search_url": url,
             "link_count": links.length,
+            "link_processed": link_processed,
             "new_link_count": curr_link_count - prev_link_count
         },
         "error": {
             "count": error_index
         }
     });
-    //if (page == last_page_content) {
-    //    next_index = get_next_index_query(search_index, true);
-    //}
-    //else
     if (curr_time_point_result_count == 0) {
         next_index = get_next_index_query(search_index, true);
     }
@@ -234,6 +237,7 @@ function clear() {
     query_status_area.children().remove();
     query_sequence = 0;
     record_sequence = 0;
+    link_processed = 0;
 }
 function view_component_init() {
     query_status_area = $("#query-status-area");
@@ -259,4 +263,14 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     search_box.val("hello mers");
     search_box.focus();
+    policy = new GooglePolicy();
+    total_links = new Set();
+    //total_links.add("safdhgdgdg");
+    //total_links.add("safdhgdgdg2345");
+    //total_links.add("http://www.sitediscount.ru/bs3rc2_white_blue/index_stratched.htm#");
+    var export_btn = $("#export");
+    export_btn.on('click', function () {
+        var links = total_links.toList().join("\n");
+        this.href = "data:text/csv;charset=utf-8,\ufeff" + encodeURIComponent(links);
+    });
 });

@@ -17,7 +17,7 @@ var Set = function () {
     };
     this.merge = function (list) {
         for (var e in list) {
-            this.add(e);
+            this.add(list[e]);
         }
     };
     this.size = function () {
@@ -26,6 +26,9 @@ var Set = function () {
     this.contains = function (elem) {
         return this.elements.indexOf(elem) != -1;
     };
+    this.toList = function () {
+        return this.elements;
+    }
 };
 
 if (!String.prototype.format) {
@@ -39,7 +42,9 @@ if (!String.prototype.format) {
         });
     };
 }
-function identity(o) {return o};
+function identity(o) {
+    return o
+}
 function two_stage_url_extractor(selectors, page, valid_url_filter, parse_url) {
     var wrappers = $(selectors[0], page);
     var entries = [];

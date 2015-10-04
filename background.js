@@ -7,7 +7,7 @@ var exhibition_tab_id;
 var exhibition_port;
 var curr_search_index;
 var search_history = new Set();
-var transition_page = "http://www.baidu.com/";
+var transition_page = "http://www.google.com.hk/";
 var current_search_url = "";
 
 function create_search_url_tab(search_url, callback) {
