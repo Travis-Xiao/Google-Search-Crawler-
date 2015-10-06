@@ -15,12 +15,13 @@ var link_processed;
 
 var query_status_area, status_board, result_area, result_count_area,
     tld_progress, tp_progress, page_progress,
+    search_box,
     start_time;
 
 function prepare_query (policy, keywords, tlds) {
     var query_base = policy.query_name + "=" + keywords.join("+");
     queries = [policy.query_name + "=", query_base];
-    for (var key in tlds.slice(0, 5))
+    for (var key in tlds)
         queries.push(query_base + encodeURIComponent(" site:*" + tlds[key]));
     return queries;
 }
@@ -28,6 +29,7 @@ function log_status(type, data) {
     switch (type) {
         case "status":
             status_board.text(data);
+            console.log(data);
             break;
         case "result":
             var item = $("<li>");
@@ -76,6 +78,7 @@ function start_query (query) {
     while (earliest_date_point < cur_date)
         time_points.push(cur_date = new Date(cur_date - day_length));
 
+    start_time.text(new Date().toISOString());
     keywords = query.split(" ");
     queries = prepare_query(policy, keywords, tlds);
     curr_time_point_result_count = 0;
@@ -99,7 +102,7 @@ function start_query (query) {
 }
 function get_next_index_page(old_index) {
     var next_index;
-    if (old_index['page'] == policy.max_page_count - 1) {
+    if (old_index['page'] == policy.max_page_count() - 1) {
         next_index = get_next_index_time_point(old_index);
         next_index['page'] = 0;
     } else {
@@ -148,6 +151,10 @@ function process_page(response) {
     var url = response.url;
     var extraction_res = policy.extract_valid_entry(page);
     var links = extraction_res["entry"];
+
+    // append datetime info to link
+    for (var i = 0; i < links.length; i++)
+        links[i] = time_points[search_index['time_point']].toLocaleDateString() + " " + links[i];
     var errors = extraction_res["error"];
     // print errors
     if (errors["count"] != 0) {
@@ -169,13 +176,13 @@ function process_page(response) {
         log_status("result", i + ":\t" + links[i]);
     var msg = "{0}: {1}/{2}\t{3}/{4}\t{5}/{6}: {7}/{8}"
         .format(new Date(), search_index['q'], queries.length,
-        search_index['time_point'], time_points.length, search_index['page'], policy.max_page_count,
+        search_index['time_point'], time_points.length, search_index['page'], policy.max_page_count(),
         curr_link_count - prev_link_count, links.length
     );
     log_status("update", {
         "progress": {
             "page": {
-                "total": policy.max_page_count,
+                "total": policy.max_page_count(),
                 "curr": search_index['page']
             },
             "time_point": {
@@ -201,8 +208,10 @@ function process_page(response) {
     if (curr_time_point_result_count == 0) {
         next_index = get_next_index_query(search_index, true);
     }
-    else if (links.length == 0 || links.length + errors['count'] < policy.record_per_page) { // indicates the last page
-        next_index = get_next_index_time_point(search_index);
+    else if (links.length == 0
+        || (links.length + errors['count'] < policy.record_per_page && search_index['page'] != 0)
+    ) { // indicates the last page
+        next_index = get_next_index_time_point(search_index, true);
     }
     last_page_content = page;
     recursive_query(next_index, "subsequent");
@@ -222,7 +231,7 @@ function recursive_query (search_index, action_type) {
     var search_paras = [
         policy.start_from(k),
         policy.convert_datetime_range(point),
-        policy.misc_query_paras
+        policy.misc_query_paras()
     ];
     var search_url = policy.search_engine_base + q + "&" + search_paras.join("&");
     port.postMessage({
@@ -250,9 +259,14 @@ function view_component_init() {
     result_count_area = $("#result-count");
     clear();
 }
+function query_from_omnibox(query) {
+    console.log(query);
+    search_box.val(query || "");
+    start_query(query);
+}
 document.addEventListener('DOMContentLoaded', function() {
     view_component_init();
-    var search_box = $("#keywords");
+    search_box = $("#keywords");
     var search_btn = $("#commit-search");
     search_box.on('keypress', function(e) {
         if (e.keyCode == 13) start_query($(this).val());
@@ -261,13 +275,10 @@ document.addEventListener('DOMContentLoaded', function() {
         clear();
         start_query(search_box.val());
     });
-    search_box.val("hello mers");
+    search_box.val("sonar marine");
     search_box.focus();
-    policy = new GooglePolicy();
+    policy = Object.create(GooglePolicy);
     total_links = new Set();
-    //total_links.add("safdhgdgdg");
-    //total_links.add("safdhgdgdg2345");
-    //total_links.add("http://www.sitediscount.ru/bs3rc2_white_blue/index_stratched.htm#");
     var export_btn = $("#export");
     export_btn.on('click', function () {
         var links = total_links.toList().join("\n");

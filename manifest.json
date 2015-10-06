@@ -7,9 +7,15 @@
     "default_icon": "icon.png",
     "default_popup": "popup.html"
   },
+  "omnibox": {
+    "keyword": "gc"
+  },
   "permissions": [
     "tabs",
+    "notifications",
     "*://*.google.com.hk/*",
+    "*://*.google.com/*",
+    "*://*.google.co.jp/*",
     "*://*.baidu.com/*"
   ],
   "background": {
@@ -17,11 +23,21 @@
     "persistent": false
   },
   "externally_connectable": {
-    "matches": ["*://*.google.com.hk/*", "*://*.baidu.com/*"]
+    "matches": [
+      "*://*.google.com.hk/*",
+      "*://*.google.com/*",
+      "*://*.google.co.jp/*",
+      "*://*.baidu.com/*"
+    ]
   },
   "content_scripts": [
     {
-      "matches": ["*://*.google.com.hk/*", "*://*.baidu.com/*"],
+      "matches": [
+        "*://*.google.com.hk/*",
+        "*://*.google.com/*",
+        "*://*.google.co.jp/*",
+        "*://*.baidu.com/*"
+      ],
       "js": ["injection.js"]
     }
   ]
