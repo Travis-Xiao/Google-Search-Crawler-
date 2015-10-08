@@ -281,8 +281,8 @@ document.addEventListener('DOMContentLoaded', function() {
     total_links = new Set();
     var export_btn = $("#export");
     export_btn.on('click', function () {
-        var links = total_links.toList().join("\n");
-        this.href = "data:text/csv;charset=utf-8,\ufeff" + encodeURIComponent(links);
+        var links = total_links.toList();
+        console.save(links, (keywords || ["data"]).join("_") + ".csv");
     });
     chrome.extension.sendMessage({type: "check_is_omnibox"}, function (response) {
         clear();
