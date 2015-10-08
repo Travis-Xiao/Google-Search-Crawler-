@@ -284,4 +284,9 @@ document.addEventListener('DOMContentLoaded', function() {
         var links = total_links.toList().join("\n");
         this.href = "data:text/csv;charset=utf-8,\ufeff" + encodeURIComponent(links);
     });
+    chrome.extension.sendMessage({type: "check_is_omnibox"}, function (response) {
+        clear();
+        search_box.val(response);
+        start_query(response);
+    })
 });

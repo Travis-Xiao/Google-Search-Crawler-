@@ -29,6 +29,7 @@ function notify_exhibition_start() {
     exhibition_port.postMessage({message: "start"});
 }
 chrome.runtime.onConnect.addListener(function (port) {
+    omnibox_text = "";
     if (port.name == "search") {
         exhibition_port = port;
         notify_exhibition_start();
@@ -72,9 +73,13 @@ chrome.extension.onMessage.addListener(function (request, sender, sendResponse) 
     console.log(request.type);
     if (request == undefined) return;
     if (request.type == 'start_exhibition') {
+        omnibox_text = "";
         chrome.tabs.create({url: chrome.extension.getURL('result_exhibition.html')}, function (tab) {
             exhibition_tab_id = tab.id;
         });
+    }
+    else if (request.type == 'check_is_omnibox') {
+        sendResponse(omnibox_text);
     }
     else if (request.type == 'search_raw_page_result') {
         exhibition_port.postMessage({
@@ -92,14 +97,10 @@ chrome.extension.onMessage.addListener(function (request, sender, sendResponse) 
         clear_notification();
     }
 });
+var omnibox_text = "";
 chrome.omnibox.onInputEntered.addListener(function (text) {
-    console.log("query_from_omnibox(" + text + ")");
-    //chrome.tabs.create({url: chrome.extension.getURL('result_exhibition.html')}, function (tab) {
-    //    exhibition_tab_id = tab.id;
-    //    chrome.tabs.executeScript(tab.id, {
-    //        code: "query_from_omnibox("+ text + ")"
-    //    }, function (data) {
-    //        console.log(data);
-    //    });
-    //});
+    omnibox_text = text;
+    chrome.tabs.create({url: chrome.extension.getURL('result_exhibition.html')}, function (tab) {
+        exhibition_tab_id = tab.id;
+    });
 });
